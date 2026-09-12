@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlipClock Timer</title>
+  <meta name="description" content="Boost your productivity with the sleek, minimal FlipClock timer. Stay focused with customizable countdowns, time tracking, and elegant flip animations." />
+  <link rel="icon" href="./images/new_logo.png" />
+  <link rel="stylesheet" href="flip_animation.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <style>
+    .hide { display: none !important; }
+    button {
+      display: flex; justify-content: center; height: 35px; align-items: center;
+      margin: 10px 10px; background: none !important; padding: 8px 10px;
+      backdrop-filter: blur(25px); border: none; color: var(--text);
+      cursor: pointer; border-radius: 5px; font-size: 1rem;
+    }
+    button:hover svg { color: var(--text) !important; filter: contrast(0%) !important; transform: scale(1.1); }
+    #pause-btn { display: none; }
+    input[type="range"] {
+      -webkit-appearance: none; height: 7px; width: 100%;
+      background: var(--slider_background); border-radius: 5px; outline: none;
+      transition: all 0.2s ease-in-out;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 14px; height: 14px;
+      background: var(--text); border-radius: 25%; cursor: pointer !important;
+    }
+    .slider-container { position: relative; }
+    .slider-marks { padding: 0 10px; display: flex; justify-content: space-between; }
+    .slider-marks span {
+      position: absolute; top: -15px; transform: translateX(-50%);
+      font-size: 12px; color: var(--slider_background); cursor: pointer;
+      transition: color 0.3s, font-weight 0.3s;
+    }
+    .slider-marks span.active { color: var(--text); font-weight: bold; }
+    .slider-marks span[data-value="1"] { left: 0%; }
+    .slider-marks span[data-value="15"] { left: 25%; }
+    .slider-marks span[data-value="30"] { left: 50%; }
+    .slider-marks span[data-value="45"] { left: 75%; }
+    .slider-marks span[data-value="60"] { left: 100%; }
+    #start-btn i, #pause-btn i, #stop-btn i { font-size: 30px; }
+  </style>
+</head>
+<body>
+  <div style="z-index: 1 !important" class="container">
+    <div class="holder">
+      <div class="flip_container">
+        <div class="container-segment">
+          <div class="segment">
+            <div class="flip-card" id="data-minute-card">
+              <div class="top">15</div>
+              <div class="bottom">15</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="holder">
+      <div class="flip_container">
+        <div class="container-segment">
+          <div class="segment">
+            <div class="flip-card" id="data-second-card">
+              <div class="top">00</div>
+              <div class="bottom">00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="z-index: 3 !important" id="controls">
+    <div style="width: 100%; display: flex; gap: 20px; flex-direction: column">
+      <div class="themes_container">
+        <svg class="default_theme" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.9773 44.9545C25.8677 44.9545 28.7298 44.3852 31.4002 43.2791C34.0706 42.173 36.497 40.5517 38.5408 38.5079C40.5846 36.4641 42.2059 34.0377 43.312 31.3673C44.4181 28.6969 44.9874 25.8348 44.9874 22.9444C44.9874 20.054 44.4181 17.1919 43.312 14.5215C42.2059 11.8511 40.5846 9.42476 38.5408 7.38093C36.497 5.33711 34.0706 3.71585 31.4002 2.60974C28.7298 1.50363 25.8677 0.934325 22.9773 0.934325L22.9773 22.9444L22.9773 44.9545Z" fill="#b7b7b7"/><path d="M22.9775 0.934155C20.0871 0.934155 17.225 1.50346 14.5546 2.60957C11.8842 3.71568 9.45784 5.33694 7.41402 7.38076C5.37019 9.42459 3.74894 11.851 2.64283 14.5214C1.53672 17.1917 0.967408 20.0538 0.967408 22.9443C0.967408 25.8347 1.53672 28.6968 2.64283 31.3672C3.74894 34.0375 5.37019 36.4639 7.41402 38.5077C9.45784 40.5516 11.8842 42.1728 14.5546 43.2789C17.225 44.385 20.0871 44.9543 22.9775 44.9543L22.9775 22.9443L22.9775 0.934155Z" fill="var(--theme-secondary)"/></svg>
+        <svg class="theme1" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.9773 44.9545C25.8677 44.9545 28.7298 44.3852 31.4002 43.2791C34.0706 42.173 36.497 40.5517 38.5408 38.5079C40.5846 36.4641 42.2059 34.0377 43.312 31.3673C44.4181 28.6969 44.9874 25.8348 44.9874 22.9444C44.9874 20.054 44.4181 17.1919 43.312 14.5215C42.2059 11.8511 40.5846 9.42476 38.5408 7.38093C36.497 5.33711 34.0706 3.71585 31.4002 2.60974C28.7298 1.50363 25.8677 0.934325 22.9773 0.934325L22.9773 22.9444L22.9773 44.9545Z" fill="#D6F5D6"/><path d="M22.9775 0.934155C20.0871 0.934155 17.225 1.50346 14.5546 2.60957C11.8842 3.71568 9.45784 5.33694 7.41402 7.38076C5.37019 9.42459 3.74894 11.851 2.64283 14.5214C1.53672 17.1917 0.967408 20.0538 0.967408 22.9443C0.967408 25.8347 1.53672 28.6968 2.64283 31.3672C3.74894 34.0375 5.37019 36.4639 7.41402 38.5077C9.45784 40.5516 11.8842 42.1728 14.5546 43.2789C17.225 44.385 20.0871 44.9543 22.9775 44.9543L22.9775 22.9443L22.9775 0.934155Z" fill="var(--theme-secondary)"/></svg>
+        <svg class="theme2" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.9773 44.9545C25.8677 44.9545 28.7298 44.3852 31.4002 43.2791C34.0706 42.173 36.497 40.5517 38.5408 38.5079C40.5846 36.4641 42.2059 34.0377 43.312 31.3673C44.4181 28.6969 44.9874 25.8348 44.9874 22.9444C44.9874 20.054 44.4181 17.1919 43.312 14.5215C42.2059 11.8511 40.5846 9.42476 38.5408 7.38093C36.497 5.33711 34.0706 3.71585 31.4002 2.60974C28.7298 1.50363 25.8677 0.934325 22.9773 0.934325L22.9773 22.9444L22.9773 44.9545Z" fill="#CED4FF"/><path d="M22.9775 0.934155C20.0871 0.934155 17.225 1.50346 14.5546 2.60957C11.8842 3.71568 9.45784 5.33694 7.41402 7.38076C5.37019 9.42459 3.74894 11.851 2.64283 14.5214C1.53672 17.1917 0.967408 20.0538 0.967408 22.9443C0.967408 25.8347 1.53672 28.6968 2.64283 31.3672C3.74894 34.0375 5.37019 36.4639 7.41402 38.5077C9.45784 40.5516 11.8842 42.1728 14.5546 43.2789C17.225 44.385 20.0871 44.9543 22.9775 44.9543L22.9775 22.9443L22.9775 0.934155Z" fill="var(--theme-secondary)"/></svg>
+        <svg class="theme3" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.9773 44.9545C25.8677 44.9545 28.7298 44.3852 31.4002 43.2791C34.0706 42.173 36.497 40.5517 38.5408 38.5079C40.5846 36.4641 42.2059 34.0377 43.312 31.3673C44.4181 28.6969 44.9874 25.8348 44.9874 22.9444C44.9874 20.054 44.4181 17.1919 43.312 14.5215C42.2059 11.8511 40.5846 9.42476 38.5408 7.38093C36.497 5.33711 34.0706 3.71585 31.4002 2.60974C28.7298 1.50363 25.8677 0.934325 22.9773 0.934325L22.9773 22.9444L22.9773 44.9545Z" fill="#FFA7A7"/><path d="M22.9775 0.934155C20.0871 0.934155 17.225 1.50346 14.5546 2.60957C11.8842 3.71568 9.45784 5.33694 7.41402 7.38076C5.37019 9.42459 3.74894 11.851 2.64283 14.5214C1.53672 17.1917 0.967408 20.0538 0.967408 22.9443C0.967408 25.8347 1.53672 28.6968 2.64283 31.3672C3.74894 34.0375 5.37019 36.4639 7.41402 38.5077C9.45784 40.5516 11.8842 42.1728 14.5546 43.2789C17.225 44.385 20.0871 44.9543 22.9775 44.9543L22.9775 22.9443L22.9775 0.934155Z" fill="var(--theme-secondary)"/></svg>
+        <svg class="theme4" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.9773 44.9545C25.8677 44.9545 28.7298 44.3852 31.4002 43.2791C34.0706 42.173 36.497 40.5517 38.5408 38.5079C40.5846 36.4641 42.2059 34.0377 43.312 31.3673C44.4181 28.6969 44.9874 25.8348 44.9874 22.9444C44.9874 20.054 44.4181 17.1919 43.312 14.5215C42.2059 11.8511 40.5846 9.42476 38.5408 7.38093C36.497 5.33711 34.0706 3.71585 31.4002 2.60974C28.7298 1.50363 25.8677 0.934325 22.9773 0.934325L22.9773 22.9444L22.9773 44.9545Z" fill="#FFC57C"/><path d="M22.9775 0.934155C20.0871 0.934155 17.225 1.50346 14.5546 2.60957C11.8842 3.71568 9.45784 5.33694 7.41402 7.38076C5.37019 9.42459 3.74894 11.851 2.64283 14.5214C1.53672 17.1917 0.967408 20.0538 0.967408 22.9443C0.967408 25.8347 1.53672 28.6968 2.64283 31.3672C3.74894 34.0375 5.37019 36.4639 7.41402 38.5077C9.45784 40.5516 11.8842 42.1728 14.5546 43.2789C17.225 44.385 20.0871 44.9543 22.9775 44.9543L22.9775 22.9443L22.9775 0.934155Z" fill="var(--theme-secondary)"/></svg>
+        <svg class="theme5" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.9773 44.9545C25.8677 44.9545 28.7298 44.3852 31.4002 43.2791C34.0706 42.173 36.497 40.5517 38.5408 38.5079C40.5846 36.4641 42.2059 34.0377 43.312 31.3673C44.4181 28.6969 44.9874 25.8348 44.9874 22.9444C44.9874 20.054 44.4181 17.1919 43.312 14.5215C42.2059 11.8511 40.5846 9.42476 38.5408 7.38093C36.497 5.33711 34.0706 3.71585 31.4002 2.60974C28.7298 1.50363 25.8677 0.934325 22.9773 0.934325L22.9773 22.9444L22.9773 44.9545Z" fill="#CCE1FF"/><path d="M22.9775 0.934155C20.0871 0.934155 17.225 1.50346 14.5546 2.60957C11.8842 3.71568 9.45784 5.33694 7.41402 7.38076C5.37019 9.42459 3.74894 11.851 2.64283 14.5214C1.53672 17.1917 0.967408 20.0538 0.967408 22.9443C0.967408 25.8347 1.53672 28.6968 2.64283 31.3672C3.74894 34.0375 5.37019 36.4639 7.41402 38.5077C9.45784 40.5516 11.8842 42.1728 14.5546 43.2789C17.225 44.385 20.0871 44.9543 22.9775 44.9543L22.9775 22.9443L22.9775 0.934155Z" fill="var(--theme-secondary)"/></svg>
+        <svg class="theme6" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.9773 44.9545C25.8677 44.9545 28.7298 44.3852 31.4002 43.2791C34.0706 42.173 36.497 40.5517 38.5408 38.5079C40.5846 36.4641 42.2059 34.0377 43.312 31.3673C44.4181 28.6969 44.9874 25.8348 44.9874 22.9444C44.9874 20.054 44.4181 17.1919 43.312 14.5215C42.2059 11.8511 40.5846 9.42476 38.5408 7.38093C36.497 5.33711 34.0706 3.71585 31.4002 2.60974C28.7298 1.50363 25.8677 0.934325 22.9773 0.934325L22.9773 22.9444L22.9773 44.9545Z" fill="#FFDB57"/><path d="M22.9775 0.934155C20.0871 0.934155 17.225 1.50346 14.5546 2.60957C11.8842 3.71568 9.45784 5.33694 7.41402 7.38076C5.37019 9.42459 3.74894 11.851 2.64283 14.5214C1.53672 17.1917 0.967408 20.0538 0.967408 22.9443C0.967408 25.8347 1.53672 28.6968 2.64283 31.3672C3.74894 34.0375 5.37019 36.4639 7.41402 38.5077C9.45784 40.5516 11.8842 42.1728 14.5546 43.2789C17.225 44.385 20.0871 44.9543 22.9775 44.9543L22.9775 22.9443L22.9775 0.934155Z" fill="var(--theme-secondary)"/></svg>
+        <svg class="theme7" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.9773 44.9545C25.8677 44.9545 28.7298 44.3852 31.4002 43.2791C34.0706 42.173 36.497 40.5517 38.5408 38.5079C40.5846 36.4641 42.2059 34.0377 43.312 31.3673C44.4181 28.6969 44.9874 25.8348 44.9874 22.9444C44.9874 20.054 44.4181 17.1919 43.312 14.5215C42.2059 11.8511 40.5846 9.42476 38.5408 7.38093C36.497 5.33711 34.0706 3.71585 31.4002 2.60974C28.7298 1.50363 25.8677 0.934325 22.9773 0.934325L22.9773 22.9444L22.9773 44.9545Z" fill="#F8E8FF"/><path d="M22.9775 0.934155C20.0871 0.934155 17.225 1.50346 14.5546 2.60957C11.8842 3.71568 9.45784 5.33694 7.41402 7.38076C5.37019 9.42459 3.74894 11.851 2.64283 14.5214C1.53672 17.1917 0.967408 20.0538 0.967408 22.9443C0.967408 25.8347 1.53672 28.6968 2.64283 31.3672C3.74894 34.0375 5.37019 36.4639 7.41402 38.5077C9.45784 40.5516 11.8842 42.1728 14.5546 43.2789C17.225 44.385 20.0871 44.9543 22.9775 44.9543L22.9775 22.9443L22.9775 0.934155Z" fill="var(--theme-secondary)"/></svg>
+        <svg class="theme8" width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.9773 44.9545C25.8677 44.9545 28.7298 44.3852 31.4002 43.2791C34.0706 42.173 36.497 40.5517 38.5408 38.5079C40.5846 36.4641 42.2059 34.0377 43.312 31.3673C44.4181 28.6969 44.9874 25.8348 44.9874 22.9444C44.9874 20.054 44.4181 17.1919 43.312 14.5215C42.2059 11.8511 40.5846 9.42476 38.5408 7.38093C36.497 5.33711 34.0706 3.71585 31.4002 2.60974C28.7298 1.50363 25.8677 0.934325 22.9773 0.934325L22.9773 22.9444L22.9773 44.9545Z" fill="#D0FFE9"/><path d="M22.9775 0.934155C20.0871 0.934155 17.225 1.50346 14.5546 2.60957C11.8842 3.71568 9.45784 5.33694 7.41402 7.38076C5.37019 9.42459 3.74894 11.851 2.64283 14.5214C1.53672 17.1917 0.967408 20.0538 0.967408 22.9443C0.967408 25.8347 1.53672 28.6968 2.64283 31.3672C3.74894 34.0375 5.37019 36.4639 7.41402 38.5077C9.45784 40.5516 11.8842 42.1728 14.5546 43.2789C17.225 44.385 20.0871 44.9543 22.9775 44.9543L22.9775 22.9443L22.9775 0.934155Z" fill="var(--theme-secondary)"/></svg>
+      </div>
+
+      <div style="display: flex; justify-content: center; width: 100%; gap: 20px; margin-bottom: 20px">
+        <button id="start-btn" style="margin: 0; padding: 0; height: fit-content; display: flex; align-items: center; justify-content: center; margin-right: 4px" title="Start">
+          <i class="ph ph-play text-center" style="opacity: 80%"></i>
+        </button>
+        <button id="pause-btn" style="transform: scale(1); margin: 0; padding: 0; height: fit-content; display: none; align-items: center; justify-content: center" title="Pause">
+          <i class="ph ph-pause" style="opacity: 80%"></i>
+        </button>
+        <button id="stop-btn" style="margin: 0; padding: 0; height: fit-content; display: flex; align-items: center; justify-content: center" title="Reset">
+          <i class="ph ph-arrow-counter-clockwise" style="opacity: 80%"></i>
+        </button>
+      </div>
+
+      <div class="slider-container">
+        <div class="slider-marks">
+          <span data-value="1">01</span>
+          <span data-value="15">15</span>
+          <span data-value="30">30</span>
+          <span data-value="45">45</span>
+          <span data-value="60">60</span>
+        </div>
+        <input id="time-slider" type="range" min="1" max="60" value="15" />
+      </div>
+
+      <input type="range" id="size_range_slider" min="25" max="120" step="10" title="Size" value="65" />
+    </div>
+
+    <div class="setting-icons-container" style="grid-template-columns: repeat(4, 1fr)">
+      <i id="volume_on" class="ph-fill ph-speaker-simple-high" style="font-size: 24px"></i>
+      <i style="display: none; font-size: 24px" id="volume_off" class="ph-fill ph-speaker-simple-x"></i>
+      <i class="themes_toggle ph-fill ph-palette" style="font-size: 27px" title="Themes"></i>
+      <svg style="display: none; transform: scale(1)" id="themes_close_toggle" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+      <i title="Lo-Fi Music" id="lofi_button" class="ph-fill ph-music-notes-simple" style="font-size: 24px"></i>
+      <i title="Full Screen" class="full ph-fill ph-corners-out" style="font-size: 28px"></i>
+    </div>
+  </div>
+
+  <div class="menu">
+    <a href="./index.html" class="icon_link"><i class="ph ph-house"></i></a>
+    <label class="theme-switch" for="checkbox" style="transform: scale(1.5); cursor: pointer">
+      <input type="checkbox" class="plus-minus" id="checkbox" checked />
+    </label>
+    <i style="display: none; cursor: pointer; font-size: 32px" id="menu_toggle" class="ph ph-list"></i>
+    <svg style="display: block; cursor: pointer" id="menu_close" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+    <button id="stop_alarm" style="height: 30px; font-size: 14px; display: none; align-items: center; justify-content: center; gap: 8px; margin: 0; padding: 0px 9px; color: #ff4d4d !important; background-color: #ff4d4d21 !important">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0" /><path d="M22 8c0-2.3-.8-4.3-2-6" /><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /><path d="M4 2C2.8 3.7 2 5.7 2 8" /></svg>
+      Stop
+    </button>
+  </div>
+
+  <div id="lofi_container" style="bottom: 20px; right: 20px !important" class="hide">
+    <div style="display: flex; flex-direction: row-reverse; gap: 10px">
+      <svg style="fill: var(--holder) !important" id="lofi_close_button" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 24 24"><path d="M 4.7070312 3.2929688 L 3.2929688 4.7070312 L 10.585938 12 L 3.2929688 19.292969 L 4.7070312 20.707031 L 12 13.414062 L 19.292969 20.707031 L 20.707031 19.292969 L 13.414062 12 L 20.707031 4.7070312 L 19.292969 3.2929688 L 12 10.585938 L 4.7070312 3.2929688 z"></path></svg>
+      <iframe id="lofi_player" frameborder="0" width="340px" height="220px" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    <div style="display: flex; flex-direction: row; gap: 5px; justify-content: space-between; padding: 0 50px 0 5px">
+      <p id="lofi_name" style="margin: 0 0 5px 20px; width: fit-content; font-family: Arial, Helvetica, sans-serif; color: var(--text); opacity: 0.5"></p>
+    </div>
+  </div>
+
+  <div style="z-index: 2 !important" class="line"></div>
+
+  <script src="lofi-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

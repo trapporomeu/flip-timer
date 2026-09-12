@@ -686,11 +686,12 @@ input[type=range]::-webkit-slider-thumb {
 .holder {
   position: relative;
   z-index: 1;
-  flex: 1 1 0;
+  flex: 0 0 auto;
   width: auto;
-  min-width: var(--clock-min-width);
+  min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
+  padding: 0 1vw;
 
   /* width: var(--clock-holder-width);
   min-width: var(--clock-holder-width);

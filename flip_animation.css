@@ -14,6 +14,7 @@
   font-size: var(--clock-digit-size);
   color: var(--text);
   width: 100%;
+  transition: font-size 0.3s ease;
 }
 
 /* ISSUE FIXED */

@@ -130,8 +130,10 @@ function updateClockDisplay(hr, min, sec) {
   const beforeHr = hourCard.querySelector(".top").textContent;
   const beforeMin = minuteCard.querySelector(".top").textContent;
   const beforeSec = secondCard.querySelector(".top").textContent;
-  // esconde o card de horas quando zerado
-  hourHolder.style.display = parseInt(paddedHr, 10) > 0 ? "" : "none";
+  // esconde o card de horas quando zerado (e encolhe os demais via body.with-hours)
+  const hasHours = parseInt(paddedHr, 10) > 0;
+  hourHolder.style.display = hasHours ? "" : "none";
+  document.body.classList.toggle("with-hours", hasHours);
   flip(hourCard, paddedHr);
   flip(minuteCard, paddedMin);
   flip(secondCard, paddedSec);
@@ -393,4 +395,5 @@ applyStoredThemeMode();
   secondCard.querySelector(".top").textContent = s;
   secondCard.querySelector(".bottom").textContent = s;
   hourHolder.style.display = h > 0 ? "" : "none";
+  document.body.classList.toggle("with-hours", h > 0);
 })();

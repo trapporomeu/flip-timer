@@ -8,7 +8,7 @@
   --clock-holder-width: 500px;
 
   /*   font-size: clamp(30vw, 40vw, 50vw); */
-  --clock-digit-size: clamp(14vw, 19vw, 24vw);
+  --clock-digit-size: clamp(28vw, 34vw, 40vw);
   /* --clock-digit-size: clamp(220px, 40vw, 480px); */
 
   --clock-min-width: clamp(14vw, 21vw, 26vw);
@@ -32,6 +32,11 @@
 
   /* SLIDER */
   --slider_background: #353535;
+}
+
+/* 3 cards (com horas): dígitos encolhem para caber lado a lado */
+body.with-hours {
+  --clock-digit-size: clamp(14vw, 19vw, 24vw);
 }
 
 [data-theme="light"] {

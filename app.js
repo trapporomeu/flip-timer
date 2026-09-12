@@ -6,6 +6,7 @@ let timerRunning = false;
 let muteFlipAudio = true;
 
 const hourCard = document.getElementById("data-hour-card");
+const hourHolder = hourCard.closest(".holder");
 const minuteCard = document.getElementById("data-minute-card");
 const secondCard = document.getElementById("data-second-card");
 const hoursSlider = document.getElementById("hours-slider");
@@ -129,6 +130,8 @@ function updateClockDisplay(hr, min, sec) {
   const beforeHr = hourCard.querySelector(".top").textContent;
   const beforeMin = minuteCard.querySelector(".top").textContent;
   const beforeSec = secondCard.querySelector(".top").textContent;
+  // esconde o card de horas quando zerado
+  hourHolder.style.display = parseInt(paddedHr, 10) > 0 ? "" : "none";
   flip(hourCard, paddedHr);
   flip(minuteCard, paddedMin);
   flip(secondCard, paddedSec);
@@ -389,4 +392,5 @@ applyStoredThemeMode();
   minuteCard.querySelector(".bottom").textContent = String(m).padStart(2, "0");
   secondCard.querySelector(".top").textContent = s;
   secondCard.querySelector(".bottom").textContent = s;
+  hourHolder.style.display = h > 0 ? "" : "none";
 })();

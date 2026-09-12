@@ -31,23 +31,31 @@
       background: var(--text); border-radius: 25%; cursor: pointer !important;
     }
     .slider-container { position: relative; }
-    .slider-marks { padding: 0 10px; display: flex; justify-content: space-between; }
-    .slider-marks span {
-      position: absolute; top: -15px; transform: translateX(-50%);
-      font-size: 12px; color: var(--slider_background); cursor: pointer;
-      transition: color 0.3s, font-weight 0.3s;
+    .time-sliders { display: flex; flex-direction: column; gap: 14px; }
+    .time-row { display: flex; flex-direction: column; gap: 4px; }
+    .time-label {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-family: Arial, Helvetica, sans-serif; font-size: 12px;
+      color: var(--text); opacity: 0.7; padding: 0 2px;
     }
-    .slider-marks span.active { color: var(--text); font-weight: bold; }
-    .slider-marks span[data-value="1"] { left: 0%; }
-    .slider-marks span[data-value="15"] { left: 25%; }
-    .slider-marks span[data-value="30"] { left: 50%; }
-    .slider-marks span[data-value="45"] { left: 75%; }
-    .slider-marks span[data-value="60"] { left: 100%; }
+    .time-label .time-value { font-weight: bold; opacity: 1; font-size: 13px; }
     #start-btn i, #pause-btn i, #stop-btn i { font-size: 30px; }
   </style>
 </head>
 <body>
   <div style="z-index: 1 !important" class="container">
+    <div class="holder">
+      <div class="flip_container">
+        <div class="container-segment">
+          <div class="segment">
+            <div class="flip-card" id="data-hour-card">
+              <div class="top">00</div>
+              <div class="bottom">00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="holder">
       <div class="flip_container">
         <div class="container-segment">
@@ -100,15 +108,19 @@
         </button>
       </div>
 
-      <div class="slider-container">
-        <div class="slider-marks">
-          <span data-value="1">01</span>
-          <span data-value="15">15</span>
-          <span data-value="30">30</span>
-          <span data-value="45">45</span>
-          <span data-value="60">60</span>
+      <div class="time-sliders">
+        <div class="time-row">
+          <div class="time-label"><span>Horas</span><span class="time-value" id="hours-value">00</span></div>
+          <input id="hours-slider" type="range" min="0" max="23" value="0" />
         </div>
-        <input id="time-slider" type="range" min="1" max="60" value="15" />
+        <div class="time-row">
+          <div class="time-label"><span>Minutos</span><span class="time-value" id="minutes-value">15</span></div>
+          <input id="minutes-slider" type="range" min="0" max="59" value="15" />
+        </div>
+        <div class="time-row">
+          <div class="time-label"><span>Segundos</span><span class="time-value" id="seconds-value">00</span></div>
+          <input id="seconds-slider" type="range" min="0" max="59" value="0" />
+        </div>
       </div>
 
       <input type="range" id="size_range_slider" min="25" max="120" step="10" title="Size" value="65" />

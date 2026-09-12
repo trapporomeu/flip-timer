@@ -8,10 +8,10 @@
   --clock-holder-width: 500px;
 
   /*   font-size: clamp(30vw, 40vw, 50vw); */
-  --clock-digit-size: clamp(24vw, 32vw, 40vw);
+  --clock-digit-size: clamp(14vw, 19vw, 24vw);
   /* --clock-digit-size: clamp(220px, 40vw, 480px); */
 
-  --clock-min-width: clamp(24vw, 34vw, 40vw);
+  --clock-min-width: clamp(14vw, 21vw, 26vw);
 
   /* font-size: clamp(3vw, 4vw, 4vw); */
   --clock-ampm-size: clamp(3vw, 4vw, 4vw);

@@ -5,9 +5,15 @@ let timerInterval = null;
 let timerRunning = false;
 let muteFlipAudio = true;
 
+const hourCard = document.getElementById("data-hour-card");
 const minuteCard = document.getElementById("data-minute-card");
 const secondCard = document.getElementById("data-second-card");
-const slider = document.getElementById("time-slider");
+const hoursSlider = document.getElementById("hours-slider");
+const minutesSlider = document.getElementById("minutes-slider");
+const secondsSlider = document.getElementById("seconds-slider");
+const hoursValue = document.getElementById("hours-value");
+const minutesValue = document.getElementById("minutes-value");
+const secondsValue = document.getElementById("seconds-value");
 const sizeSlider = document.getElementById("size_range_slider");
 const clockContainer = document.querySelector(".container");
 const menuToggle = document.getElementById("menu_toggle");
@@ -90,9 +96,10 @@ stopAlarmBtn.onclick = () => {
 
 /* ---------- Flip rendering ---------- */
 function formatTime(totalSeconds) {
-  const m = Math.floor(totalSeconds / 60);
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
   const s = totalSeconds % 60;
-  return [m, s < 10 ? "0" + s : s];
+  return [h, m < 10 ? "0" + m : m, s < 10 ? "0" + s : s];
 }
 function flip(flipCard, newNumber) {
   const topHalf = flipCard.querySelector(".top");
@@ -115,15 +122,18 @@ function flip(flipCard, newNumber) {
   });
   flipCard.append(topFlip, bottomFlip);
 }
-function updateClockDisplay(min, sec) {
+function updateClockDisplay(hr, min, sec) {
+  const paddedHr = String(hr).padStart(2, "0");
   const paddedMin = String(min).padStart(2, "0");
   const paddedSec = String(sec).padStart(2, "0");
+  const beforeHr = hourCard.querySelector(".top").textContent;
   const beforeMin = minuteCard.querySelector(".top").textContent;
   const beforeSec = secondCard.querySelector(".top").textContent;
+  flip(hourCard, paddedHr);
   flip(minuteCard, paddedMin);
   flip(secondCard, paddedSec);
-  if (!muteFlipAudio && (beforeMin !== paddedMin || beforeSec !== paddedSec)) playTick();
-  document.title = `${paddedMin}:${paddedSec} — FlipClock Timer`;
+  if (!muteFlipAudio && (beforeHr !== paddedHr || beforeMin !== paddedMin || beforeSec !== paddedSec)) playTick();
+  document.title = `${paddedHr}:${paddedMin}:${paddedSec} — FlipClock Timer`;
 }
 
 /* ---------- Countdown engine ---------- */
@@ -138,19 +148,20 @@ function tick() {
     return;
   }
   timerRemaining--;
-  const [m, s] = formatTime(timerRemaining);
-  updateClockDisplay(m, s);
+  const [h, m, s] = formatTime(timerRemaining);
+  updateClockDisplay(h, m, s);
 }
 function startTimer() {
   ensureAudio();
+  if (timerDuration <= 0) return;
   startBtn.style.display = "none";
   pauseBtn.style.display = "flex";
   if (timerRunning) return;
   // se chegou a zero antes, reinicia do duration
   if (timerRemaining <= 0) {
     timerRemaining = timerDuration;
-    const [m, s] = formatTime(timerRemaining);
-    updateClockDisplay(m, s);
+    const [h, m, s] = formatTime(timerRemaining);
+    updateClockDisplay(h, m, s);
   }
   timerRunning = true;
   timerInterval = setInterval(tick, 1000);
@@ -166,47 +177,50 @@ function resetTimer() {
   stopAlarmSound();
   stopAlarmBtn.style.display = "none";
   timerRemaining = timerDuration;
-  const [m, s] = formatTime(timerRemaining);
-  updateClockDisplay(m, s);
+  const [h, m, s] = formatTime(timerRemaining);
+  updateClockDisplay(h, m, s);
 }
 startBtn.addEventListener("click", startTimer);
 pauseBtn.addEventListener("click", pauseTimer);
 stopBtn.addEventListener("click", resetTimer);
 
-/* ---------- Time slider (1–60 min) ---------- */
+/* ---------- Time sliders (horas / minutos / segundos) ---------- */
 let debounceTimeout;
-slider.addEventListener("input", (e) => {
-  clearTimeout(debounceTimeout);
-  debounceTimeout = setTimeout(() => {
-    const mins = parseInt(e.target.value, 10);
-    pauseTimer();
-    timerDuration = mins * 60;
-    timerRemaining = timerDuration;
-    const [m, s] = formatTime(timerRemaining);
-    updateClockDisplay(m, s);
-  }, 20);
-});
-const marks = document.querySelectorAll(".slider-marks span");
-function updateActiveMark() {
-  const v = parseInt(slider.value, 10);
-  marks.forEach((mark) => {
-    mark.classList.toggle("active", parseInt(mark.dataset.value, 10) === v);
-  });
+function readSlidersTotal() {
+  const h = parseInt(hoursSlider.value, 10) || 0;
+  const m = parseInt(minutesSlider.value, 10) || 0;
+  const s = parseInt(secondsSlider.value, 10) || 0;
+  return h * 3600 + m * 60 + s;
 }
-slider.addEventListener("input", updateActiveMark);
-marks.forEach((mark) => {
-  mark.addEventListener("click", () => {
-    slider.value = mark.dataset.value;
-    const mins = parseInt(mark.dataset.value, 10);
-    pauseTimer();
-    timerDuration = mins * 60;
-    timerRemaining = timerDuration;
-    const [m, s] = formatTime(timerRemaining);
-    updateClockDisplay(m, s);
-    updateActiveMark();
+function syncValueBadges() {
+  hoursValue.textContent = String(parseInt(hoursSlider.value, 10) || 0).padStart(2, "0");
+  minutesValue.textContent = String(parseInt(minutesSlider.value, 10) || 0).padStart(2, "0");
+  secondsValue.textContent = String(parseInt(secondsSlider.value, 10) || 0).padStart(2, "0");
+}
+function setSlidersFromDuration(total) {
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  hoursSlider.value = Math.min(23, h);
+  minutesSlider.value = m;
+  secondsSlider.value = s;
+  syncValueBadges();
+}
+function applySliders() {
+  pauseTimer();
+  timerDuration = readSlidersTotal();
+  timerRemaining = timerDuration;
+  const [h, m, s] = formatTime(timerRemaining);
+  updateClockDisplay(h, m, s);
+}
+[hoursSlider, minutesSlider, secondsSlider].forEach((el) => {
+  el.addEventListener("input", () => {
+    syncValueBadges();
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(applySliders, 20);
   });
 });
-updateActiveMark();
+syncValueBadges();
 
 /* ---------- Size slider ---------- */
 function clockSize() {
@@ -341,22 +355,25 @@ document.addEventListener("mousemove", (e) => {
 });
 document.addEventListener("mouseup", () => { isDragging = false; });
 
-/* ---------- URL params: ?t=MM:SS[&start] ---------- */
+/* ---------- URL params: ?t=HH:MM:SS ou ?t=MM:SS[&start] ---------- */
 (function handleUrlParams() {
   try {
     const params = new URLSearchParams(window.location.search);
     if (!params.has("t")) return;
-    const [mm, ss] = (params.get("t") || "15:00").split(":");
-    const mins = parseInt(mm, 10) || 0;
-    const secs = parseInt(ss, 10) || 0;
-    timerDuration = mins * 60 + secs;
-    if (timerDuration < 1) timerDuration = 60;
-    if (timerDuration > 3600) timerDuration = 3600;
+    const parts = (params.get("t") || "15:00").split(":").map((p) => parseInt(p, 10) || 0);
+    let total;
+    if (parts.length >= 3) {
+      total = parts[0] * 3600 + parts[1] * 60 + parts[2];
+    } else {
+      total = parts[0] * 60 + (parts[1] || 0);
+    }
+    if (total < 1) total = 60;
+    if (total > 86399) total = 86399;
+    timerDuration = total;
     timerRemaining = timerDuration;
-    const sliderVal = Math.min(60, Math.max(1, Math.round(timerDuration / 60)));
-    slider.value = sliderVal;
-    updateActiveMark();
-    updateClockDisplay(Math.floor(timerRemaining / 60), String(timerRemaining % 60).padStart(2, "0"));
+    setSlidersFromDuration(timerDuration);
+    const [h, m, s] = formatTime(timerRemaining);
+    updateClockDisplay(h, m, s);
     if (window.location.href.includes("start")) startTimer();
   } catch (e) { /* noop */ }
 })();
@@ -364,11 +381,12 @@ document.addEventListener("mouseup", () => { isDragging = false; });
 /* ---------- Init ---------- */
 applyStoredThemeMode();
 (function init() {
-  const [m, s] = formatTime(timerRemaining);
+  const [h, m, s] = formatTime(timerRemaining);
   // pinta direto sem animação no primeiro frame
+  hourCard.querySelector(".top").textContent = String(h).padStart(2, "0");
+  hourCard.querySelector(".bottom").textContent = String(h).padStart(2, "0");
   minuteCard.querySelector(".top").textContent = String(m).padStart(2, "0");
   minuteCard.querySelector(".bottom").textContent = String(m).padStart(2, "0");
   secondCard.querySelector(".top").textContent = s;
   secondCard.querySelector(".bottom").textContent = s;
-  updateActiveMark();
 })();

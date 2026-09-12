@@ -150,6 +150,7 @@ function tick() {
     timerRunning = false;
     startBtn.style.display = "flex";
     pauseBtn.style.display = "none";
+    syncMenuPlayIcon();
     return;
   }
   timerRemaining--;
@@ -170,12 +171,14 @@ function startTimer() {
   }
   timerRunning = true;
   timerInterval = setInterval(tick, 1000);
+  syncMenuPlayIcon();
 }
 function pauseTimer() {
   startBtn.style.display = "flex";
   pauseBtn.style.display = "none";
   clearInterval(timerInterval);
   timerRunning = false;
+  syncMenuPlayIcon();
 }
 function resetTimer() {
   pauseTimer();
@@ -188,6 +191,19 @@ function resetTimer() {
 startBtn.addEventListener("click", startTimer);
 pauseBtn.addEventListener("click", pauseTimer);
 stopBtn.addEventListener("click", resetTimer);
+
+/* ---------- Play/Pause no menu (espelha os controles) ---------- */
+const menuPlayBtn = document.getElementById("menu-play-btn");
+const menuPlayIcon = document.getElementById("menu-play-icon");
+function syncMenuPlayIcon() {
+  menuPlayIcon.classList.toggle("ph-play", !timerRunning);
+  menuPlayIcon.classList.toggle("ph-pause", timerRunning);
+}
+menuPlayBtn.addEventListener("click", () => {
+  if (timerRunning) pauseTimer();
+  else startTimer();
+});
+syncMenuPlayIcon();
 
 /* ---------- Time sliders (horas / minutos / segundos) ---------- */
 let debounceTimeout;

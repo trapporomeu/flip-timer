@@ -691,7 +691,7 @@ input[type=range]::-webkit-slider-thumb {
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-  padding: 0 1vw;
+  padding: 0 4vw;
 
   /* width: var(--clock-holder-width);
   min-width: var(--clock-holder-width);

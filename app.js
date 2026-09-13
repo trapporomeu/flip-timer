@@ -193,13 +193,12 @@ pauseBtn.addEventListener("click", pauseTimer);
 stopBtn.addEventListener("click", resetTimer);
 
 /* ---------- Play/Pause no menu (espelha os controles) ---------- */
-const menuPlayBtn = document.getElementById("menu-play-btn");
 const menuPlayIcon = document.getElementById("menu-play-icon");
 function syncMenuPlayIcon() {
   menuPlayIcon.classList.toggle("ph-play", !timerRunning);
   menuPlayIcon.classList.toggle("ph-pause", timerRunning);
 }
-menuPlayBtn.addEventListener("click", () => {
+menuPlayIcon.addEventListener("click", () => {
   if (timerRunning) pauseTimer();
   else startTimer();
 });

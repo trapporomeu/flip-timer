@@ -391,14 +391,6 @@ lofiButton.onclick = () => {
   } catch (e) { /* noop */ }
 })();
 
-/* ---------- Bloqueio em celulares ---------- */
-(function blockMobile() {
-  try {
-    const isMobileUA = /Mobi|Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || "");
-    if (isMobileUA) document.getElementById("mobile-block").classList.add("show");
-  } catch (e) { /* noop */ }
-})();
-
 /* ---------- Init ---------- */
 applyStoredThemeMode();
 (function init() {

@@ -43,25 +43,6 @@
     }
     .time-label .time-value { font-weight: bold; opacity: 1; font-size: 13px; }
     #start-btn i, #pause-btn i, #stop-btn i { font-size: 30px; }
-    #mobile-block {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background-color: var(--background);
-      color: var(--text);
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 24px;
-      font-family: "Orbitron", Arial, Helvetica, sans-serif;
-      font-size: 18px;
-      line-height: 1.6;
-    }
-    #mobile-block.show { display: flex; }
-    @media (pointer: coarse) and (max-width: 900px) {
-      #mobile-block { display: flex; }
-    }
   </style>
 </head>
 <body>
@@ -179,10 +160,6 @@
   </div>
 
   <div style="z-index: 2 !important" class="line"></div>
-
-  <div id="mobile-block">
-    <p>Não disponível<br />para celulares</p>
-  </div>
 
   <script src="lofi-config.js"></script>
   <script src="app.js"></script>

@@ -257,10 +257,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-/* ---------- Menu show/hide ---------- */
-menuToggle.style.display = "none";
-menuClose.style.display = "block";
-controls.style.display = "flex";
+/* ---------- Menu show/hide (começa fechado) ---------- */
+menuToggle.style.display = "block";
+menuClose.style.display = "none";
+controls.classList.add("close");
 menuToggle.onclick = () => {
   menuToggle.style.display = "none";
   menuClose.style.display = "block";
@@ -273,21 +273,21 @@ menuClose.onclick = () => {
   controls.classList.add("close");
 };
 
-/* ---------- Light / dark ---------- */
-const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
-function applyStoredThemeMode() {
-  const stored = localStorage.getItem("data-theme") || "dark";
-  document.documentElement.setAttribute("data-theme", stored);
-  toggleSwitch.checked = stored === "dark";
-  applyCustomThemeColors();
-}
-function switchTheme(e) {
-  const mode = e.target.checked ? "dark" : "light";
+/* ---------- Light / dark (automático: segue o navegador) ---------- */
+const colorSchemeQuery = window.matchMedia("(prefers-color-scheme: light)");
+function applyColorScheme() {
+  const mode = colorSchemeQuery.matches ? "light" : "dark";
   document.documentElement.setAttribute("data-theme", mode);
-  localStorage.setItem("data-theme", mode);
   applyCustomThemeColors();
 }
-toggleSwitch.addEventListener("change", switchTheme);
+function applyStoredThemeMode() {
+  applyColorScheme();
+}
+if (typeof colorSchemeQuery.addEventListener === "function") {
+  colorSchemeQuery.addEventListener("change", applyColorScheme);
+} else if (typeof colorSchemeQuery.addListener === "function") {
+  colorSchemeQuery.addListener(applyColorScheme);
+}
 
 /* ---------- Custom color themes ---------- */
 const THEMES = {

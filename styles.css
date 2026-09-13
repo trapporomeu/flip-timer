@@ -70,7 +70,7 @@ body {
   height: 100%;
   width: 100%;
   max-width: 100vw;
-  overflow-x: hidden;
+  overflow: hidden;
 
   font-family: "Bebas Neue", Arial;
   cursor: default;
@@ -337,7 +337,7 @@ input[type=range]::-webkit-slider-thumb {
   bottom: 20px;
   right: 20px;
   transform-origin: right;
-  cursor: grabbing !important;
+  cursor: default;
   background-color: var(--lofi_container_border);
   width: fit-content;
   height: fit-content;

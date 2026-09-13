@@ -266,11 +266,18 @@ menuToggle.onclick = () => {
   controls.classList.remove("close");
   controls.style.display = "flex";
 };
-menuClose.onclick = () => {
+menuClose.onclick = closeMenu;
+function closeMenu() {
   menuToggle.style.display = "block";
   menuClose.style.display = "none";
   controls.classList.add("close");
-};
+}
+// clicar fora do menu também fecha
+document.addEventListener("click", (e) => {
+  if (controls.classList.contains("close")) return;
+  if (e.target.closest("#controls") || e.target.closest(".menu")) return;
+  closeMenu();
+});
 
 /* ---------- Light / dark (automático: segue o navegador) ---------- */
 const colorSchemeQuery = window.matchMedia("(prefers-color-scheme: light)");
@@ -350,7 +357,6 @@ const lofiButton = document.getElementById("lofi_button");
 const lofiPlayer = document.getElementById("lofi_player");
 const lofiContainer = document.getElementById("lofi_container");
 const lofiCloseButton = document.getElementById("lofi_close_button");
-document.getElementById("lofi_name").textContent = (typeof LOFI !== "undefined" && LOFI.name) || "";
 lofiCloseButton.onclick = () => {
   lofiContainer.classList.add("hide");
   lofiPlayer.src = "";
@@ -361,19 +367,6 @@ lofiButton.onclick = () => {
   }
   lofiContainer.classList.remove("hide");
 };
-let isDragging = false, currentX = 0, currentY = 0, initialX = 0, initialY = 0, offsetX = 0, offsetY = 0;
-lofiContainer.addEventListener("mousedown", (e) => {
-  isDragging = true;
-  initialX = e.clientX; initialY = e.clientY;
-  offsetX = currentX; offsetY = currentY;
-});
-document.addEventListener("mousemove", (e) => {
-  if (!isDragging) return;
-  currentX = offsetX + (e.clientX - initialX);
-  currentY = offsetY + (e.clientY - initialY);
-  lofiContainer.style.transform = `translate(${currentX}px, ${currentY}px)`;
-});
-document.addEventListener("mouseup", () => { isDragging = false; });
 
 /* ---------- URL params: ?t=HH:MM:SS ou ?t=MM:SS[&start] ---------- */
 (function handleUrlParams() {
@@ -395,6 +388,14 @@ document.addEventListener("mouseup", () => { isDragging = false; });
     const [h, m, s] = formatTime(timerRemaining);
     updateClockDisplay(h, m, s);
     if (window.location.href.includes("start")) startTimer();
+  } catch (e) { /* noop */ }
+})();
+
+/* ---------- Bloqueio em celulares ---------- */
+(function blockMobile() {
+  try {
+    const isMobileUA = /Mobi|Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || "");
+    if (isMobileUA) document.getElementById("mobile-block").classList.add("show");
   } catch (e) { /* noop */ }
 })();
 

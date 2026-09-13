@@ -43,6 +43,25 @@
     }
     .time-label .time-value { font-weight: bold; opacity: 1; font-size: 13px; }
     #start-btn i, #pause-btn i, #stop-btn i { font-size: 30px; }
+    #mobile-block {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background-color: var(--background);
+      color: var(--text);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      font-family: "Orbitron", Arial, Helvetica, sans-serif;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    #mobile-block.show { display: flex; }
+    @media (pointer: coarse) and (max-width: 900px) {
+      #mobile-block { display: flex; }
+    }
   </style>
 </head>
 <body>
@@ -154,15 +173,16 @@
 
   <div id="lofi_container" style="bottom: 20px; right: 20px !important" class="hide">
     <div style="display: flex; flex-direction: row-reverse; gap: 10px">
-      <svg style="fill: var(--holder) !important" id="lofi_close_button" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 24 24"><path d="M 4.7070312 3.2929688 L 3.2929688 4.7070312 L 10.585938 12 L 3.2929688 19.292969 L 4.7070312 20.707031 L 12 13.414062 L 19.292969 20.707031 L 20.707031 19.292969 L 13.414062 12 L 20.707031 4.7070312 L 19.292969 3.2929688 L 12 10.585938 L 4.7070312 3.2929688 z"></path></svg>
+      <svg style="fill: #ffffff !important" id="lofi_close_button" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16" height="16" viewBox="0 0 24 24"><path d="M 4.7070312 3.2929688 L 3.2929688 4.7070312 L 10.585938 12 L 3.2929688 19.292969 L 4.7070312 20.707031 L 12 13.414062 L 19.292969 20.707031 L 20.707031 19.292969 L 13.414062 12 L 20.707031 4.7070312 L 19.292969 3.2929688 L 12 10.585938 L 4.7070312 3.2929688 z"></path></svg>
       <iframe id="lofi_player" frameborder="0" width="340px" height="220px" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
-    <div style="display: flex; flex-direction: row; gap: 5px; justify-content: space-between; padding: 0 50px 0 5px">
-      <p id="lofi_name" style="margin: 0 0 5px 20px; width: fit-content; font-family: Arial, Helvetica, sans-serif; color: var(--text); opacity: 0.5"></p>
     </div>
   </div>
 
   <div style="z-index: 2 !important" class="line"></div>
+
+  <div id="mobile-block">
+    <p>Não disponível<br />para celulares</p>
+  </div>
 
   <script src="lofi-config.js"></script>
   <script src="app.js"></script>
